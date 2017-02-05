@@ -84,9 +84,9 @@ void updateCamera() {
     center.x, center.y, center.z, // centerX, centerY, centerZ
     UPVec.x, UPVec.y, UPVec.z); // upX, upY, upZ*/
 
-  println("Auge X:"+ auge.x+" Y:"+ auge.y+" Z:"+ auge.z );
-  println("Center X:"+ center.x+" Y:"+ center.y+" Z:"+ center.z );
-  println("Richtung X:"+ richtung.x+" Y:"+ richtung.y+" Z:"+ richtung.z+  " PHI:"+phi/(2*PI)*360+" DETA:"+deta/(2*PI)*360 );
+  //println("Auge X:"+ auge.x+" Y:"+ auge.y+" Z:"+ auge.z );
+  //println("Center X:"+ center.x+" Y:"+ center.y+" Z:"+ center.z );
+  //println("Richtung X:"+ richtung.x+" Y:"+ richtung.y+" Z:"+ richtung.z+  " PHI:"+phi/(2*PI)*360+" DETA:"+deta/(2*PI)*360 );
   
   pushMatrix();
   PVector fadenkreuz,zwv;
