@@ -126,3 +126,11 @@ void mouseMoved() {
     frame.getX()+round(width/2), 
     frame.getY()+round(height/2));
 }
+
+PVector getAuge(){
+return auge.copy();
+}
+
+PVector getRichtung(){
+return richtung.copy();
+}

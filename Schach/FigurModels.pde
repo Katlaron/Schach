@@ -141,6 +141,15 @@ void laufer(float x, float y) {
   popMatrix();
 }
 
+
+void kreis(float x, float y) {
+  x--;
+  y--;
+  pushMatrix();
+  translate(x*scl+scl/2, y*scl+scl/2,1);
+  ellipse(0,0,scl/4,scl/4);
+  popMatrix();
+}
 void coordAxis() {
   stroke(255, 0, 0);
   line(0, 0, 0, 100, 0, 0);
