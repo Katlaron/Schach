@@ -1,13 +1,14 @@
 class Feld {
 
-  int x, y, col, figur, partei;
+  int x, y, z, col, figur, partei;
   boolean mausaktiv, aktiv, moglich;
 
 
-  Feld(int xrichtung, int yrichtung, int par, int  fig)
+  Feld(int xrichtung, int yrichtung, int zrichtung, int par, int  fig)
   {
     x = xrichtung;
     y = yrichtung;
+    z = zrichtung;
     if (partei==weiss) {
       col = figurweiss;
     } else {
@@ -21,7 +22,7 @@ class Feld {
   }
 
   void zeichnen() {
-    if (aktiv) {
+    if (aktiv) {                        // Farbbesttimmung
       fill(0, 255, 0);
     } else {
       if (partei==weiss) {
@@ -29,34 +30,23 @@ class Feld {
       } else {
         col= figurschwarz;
       }
+      if (mausaktiv)  {
+        if (partei==weiss) {
+          col = figurweiss-60;
+        } else {
+          col= figurschwarz+60;
+        }
+      }
       fill(col);
-      if (mausaktiv) fill( 255/2);
-    }
-    
+    }    
     if (moglich) fill(255, 0, 0);
     
-    switch (figur) {
-    case 1: 
-      turm(x, y); 
-      break;
-    case 2: 
-      springer(x, y); 
-      break;
-    case 3: 
-      laufer(x, y); 
-      break;
-    case 4: 
-      konig(x, y); 
-      break;
-    case 5: 
-      dame(x, y); 
-      break;
-    case 6: 
-      bauer(x, y); 
-      break;
+    if (figur != leer){                // Figur setzen
+      figursetzen(x,y,z,figur);
+    }else{
+      if (moglich)
+        figursetzen(x,y,z,kreis);
     }
-    if ((figur == leer)&&(moglich))
-      kreis(x, y);
   }
 
   void setmoglich(boolean m) {

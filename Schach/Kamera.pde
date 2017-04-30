@@ -1,32 +1,37 @@
-import java.awt.Robot;  
+// Dieser Abschnitt kümmert sich ausschließlich um die Kamera Bewegung
+// Bewegung mit WASD sowie SHIFT für Höhe gewinnen und SPACE um zu sinken
+// Um die Camera zu verwenden im setup() initCamera() aufrufen
+// Um die Camera zu aktualiesieren in draw() updateCamera() aufrufen
+
+import java.awt.Robot;                  // Bibliothek um Mausposition zurückzusetzen
 
 float eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ;
-float speedeyefront, speedeyeside, speedeyeUP,normalspeed;
+float speedeyefront, speedeyeside, speedeyeUP, normalspeed, mausEmpfindlichkeit;
 PVector richtung;
-PVector auge, UPVec;
-PVector center;
-float rmx, rmy;
-Robot robot;  
+PVector auge, initauge, UPVec;
+PVector center, initcenter;
+float rmx, rmy;                  //mausposition
+int started=0;
+Robot robot;                      //robot Objekt vom Typ Robot(Klasse, die in der Bibliothek definiert ist) 
 
-void initCamera() {
-normalspeed=10;
-  auge = new PVector(200, 200, 200);
-  UPVec = new PVector(0, 0, -1);
-  noCursor();
-  try { 
-    robot = new Robot();
+void initCamera() {              // initialiesiert die Kamera 
+  normalspeed=30;                            // init Wert für die Augengeschwindigkeit
+  mausEmpfindlichkeit=0.6;                        // init Wert für Mausempfindlichkeit normalerweise 1
+  initauge = new PVector(-700, -700, 900);        // init Werte für die Augenposition
+  initcenter = new PVector(0, 0, 0);                // init Wert für Die Szene der Kamera
+  UPVec = new PVector(0, 0, -1);             // init für die Richtung die als oben erscheinen soll
+  auge = initauge.copy();
+  noCursor();                                // deaktiviert den Curser
+  try {                   
+    robot = new Robot();                     // versucht Robot zu erstellen, wird benötigt um Maus in der Bildschirmmitte gefangen zu halten
   }  
   catch(Throwable e) {
   }
-  rmx=width/2;
-  rmy=height/2;
-  robot.mouseMove(
-    frame.getX()+round(width/2), 
-    frame.getY()+round(height/2));
+  zentrieren();
 }
 
 
-void keyPressed() {
+void keyPressed() {                             // reagiert auf Tastendrücke und verändert die Augenposition
   if (key == 'a'||key == 'A') {  
     speedeyeside = normalspeed;
   }
@@ -42,15 +47,17 @@ void keyPressed() {
 
   if (key == ' ') {
     speedeyeUP = -normalspeed;
-    println("Space");
+    //println("Space");
   }
-
   if (keyCode == SHIFT) {
     speedeyeUP = +normalspeed;
-    println("Shift");
+    //println("Shift");
+  }
+  if (key == 'z'||key == 'Z') {
+    zentrieren();
   }
 }
-void keyReleased() {
+void keyReleased() {                                // kümmert sich darum, dass Bewegung aufhört wenn eine Taste losgelassen wird
   if (key == 'w'||key == 'W'&& speedeyefront>0) {
     speedeyefront = 0;
   }
@@ -71,22 +78,23 @@ void keyReleased() {
   }
 }
 
-void updateCamera() {
+void updateCamera() {         // eigentliche Berechnung der Kamera
 
+  if (started<2) {      // Zentriert das Objekt beim Start des Programmes
+    zentrieren();
+    started ++;
+  }
   PVector front, side, speedup;
-  float phi = map(rmx, 0, width,  2*PI,0);
-  float deta = map(rmy, 0, height,-PI,0 );
-  richtung = new PVector(-cos(phi)*sin(deta), sin(phi)*sin(deta), -cos(deta));
-  richtung.normalize();
-  center= auge.copy();
-  center.add(richtung);
+  float phi = map(rmx, 0, width, -PI, PI);              // mapt die Mausposition X auf einen Winkel phi in Kugelkoordinaten
+  float deta = map(rmy, 0, height, 0, PI );              // mapt die Mausposition Y auf den Winkel deta
+  richtung = new PVector(cos(phi)*sin(deta), sin(phi)*sin(deta), cos(deta));   // macht einen Richtungsvektor draus -> Umrechnung von Kugelkoordinaten in Kartesische
+
+  richtung.normalize();                                //macht Einheitsvektor draus (Betrag 1)
+  center= auge.copy();                                  //vektor auge kopiert in vektor auge 
+  center.add(richtung);                                   // Punkt auf den die Camera schaut    addiert mathematisch -> Lage Betrachtungspunkt
   camera(auge.x, auge.y, auge.z, // eyeX, eyeY, eyeZ
     center.x, center.y, center.z, // centerX, centerY, centerZ
     UPVec.x, UPVec.y, UPVec.z); // upX, upY, upZ*/
-
-  //println("Auge X:"+ auge.x+" Y:"+ auge.y+" Z:"+ auge.z );
-  //println("Center X:"+ center.x+" Y:"+ center.y+" Z:"+ center.z );
-  //println("Richtung X:"+ richtung.x+" Y:"+ richtung.y+" Z:"+ richtung.z+  " PHI:"+phi/(2*PI)*360+" DETA:"+deta/(2*PI)*360 );
   
   pushMatrix();
   PVector fadenkreuz,zwv;
@@ -98,30 +106,45 @@ void updateCamera() {
   sphere(0.5);
   popMatrix();
   
-  center.sub(richtung);
-
+  //Bewgung des Auges:
   front = richtung.copy();
-  front.mult(speedeyefront);
-  auge.add(front);
-  side = UPVec.cross(richtung);
+  front.mult(speedeyefront);         
+  auge.add(front);                  // Auge + Geschwindigkeit in Blickrichtung
+  side = UPVec.cross(richtung);      // Bestimmung eines Vektors der zur Seite zeigt    Kreuzprodukt: Ergebnis - Vektor, der Senkrecht auf den 2 vektoren steht
   side.normalize();
   side.mult(speedeyeside);
-  auge.add(side);
+  auge.add(side);                    // auge + senkrechte Geschwindigkeit
   speedup = UPVec.copy();
   speedup.mult(speedeyeUP);
-  auge.add(speedup);
-  
+  auge.add(speedup);                // auge + nach oben Gerichtete Geschwindigkeit
 
 }
 
-void mouseMoved() {
-
-  rmx += mouseX-width/2;  
-  rmy += mouseY-height/2; 
+void mouseMoved() {              // speichert Mausbewegung in rmx, rmy und setzt dannach die Mausposition wieder zurück
+  rmx += (mouseX-width/2)*mausEmpfindlichkeit;  
+  rmy += (mouseY-height/2)*mausEmpfindlichkeit;
   if (rmx>width)rmx=0;
   if (rmx<0)rmx=width;
   if (rmy>height-1)rmy=height-1;
   if (rmy<1)rmy=1;
+  robot.mouseMove(                    //setzt Cursor wieder in Mittelpunkt
+    frame.getX()+round(width/2), 
+    frame.getY()+round(height/2));
+}
+
+void zentrieren() {                        // setzt die Kamera auf die Initalkoordinaten zurück
+  auge = initauge.copy();
+
+  float phi, deta;
+  PVector richt, zentrum;
+
+  zentrum = initcenter.copy();
+  richt = zentrum.sub(auge);          
+  phi= atan2(richt.y, richt.x);
+  rmx = map(phi, -PI, PI, 0, width);
+
+  deta = acos(richt.z/richt.mag());
+  rmy = map(deta, 0, PI, 0, height ); 
   robot.mouseMove(
     frame.getX()+round(width/2), 
     frame.getY()+round(height/2));
