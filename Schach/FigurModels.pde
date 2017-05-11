@@ -83,10 +83,6 @@ void aufstellen() {
           feld[i][j][k] = new Feld(i, j, k, schwarz, leer);
     }
   }
-  feld[4][6][1] = new Feld(4, 6, 1, schwarz, bauer);
-  feld[5][1][1] = new Feld(5, 1, 1, weiss, bauer);
-  feld[4][6][3] = new Feld(4, 6, 3, schwarz, bauer);
-  feld[5][6][3] = new Feld(5, 6, 3, weiss, bauer);
 }
 
 

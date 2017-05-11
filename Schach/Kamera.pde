@@ -54,6 +54,7 @@ void keyPressed() {                             // reagiert auf Tastendrücke un
     //println("Shift");
   }
   if (key == 'z'||key == 'Z') {
+    //saveFrame("Fortschritt-####.png");
     zentrieren();
   }
 }

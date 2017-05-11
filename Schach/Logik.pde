@@ -9,12 +9,22 @@ boolean findeZugmogl(int i, int j, int k) {
     } else {
       figurrichtung = -1;
     }
-    for (int c=-1; c<=1;c++){
-      testeaufmoglichbauer(i,j,k,0,figurrichtung,c);    // normales nach vorne gehen
-      testeaufmoglichbauer(i,j,k,1,figurrichtung,c);   // zur Seite schlagen
-      testeaufmoglichbauer(i,j,k,-1,figurrichtung,c);
+    for (int c=-1; c<=1; c++) {
+      testeaufmoglichbauer(i, j, k, 0, figurrichtung, c);    // normales nach vorne gehen
+      testeaufmoglichbauer(i, j, k, 1, figurrichtung, c);   // zur Seite schlagen
+      testeaufmoglichbauer(i, j, k, -1, figurrichtung, c);
     }
-    
+    if ((j==2)&&(feld[i][j][k].getpartei()==weiss)) {                           // 2 Felder nach vorn am Start
+      if ((feld[i][j+1][k].getfigur()==leer)&&(feld[i][j+2][k].getfigur()==leer))
+        feld[i][j+2][k].setmoglich(true);
+    }
+
+    if ((j==7)&&(feld[i][j][k].getpartei()==schwarz)) {                         // 2 Felder nach vorn am Start
+      if ((feld[i][j-1][k].getfigur()==leer)&&(feld[i][j-2][k].getfigur()==leer))
+        feld[i][j-2][k].setmoglich(true);
+    }
+
+
     /*
     if ((j+figurrichtung>0)&&(j+figurrichtung<9)) {                         // Feld vor dem Bauern
      if (feld[i][j+figurrichtung][k].getfigur()==leer)

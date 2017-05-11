@@ -49,7 +49,7 @@ void draw() {
 }
 
 void mouseClicked() {
-  //saveFrame("Fortschritt-####.png");
+  
   if (!bewegung) {          // hier wird erst eine Figur ausgewählt die bewegt wird (Figur ist noch nicht ausgewählt)
 
     removemoglich(); // alle Möglichen Felder zurücksetzen
